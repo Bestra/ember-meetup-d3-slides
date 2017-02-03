@@ -33,24 +33,31 @@ export default Ember.Component.extend({
       .enter()
       .append("g")
       .attr("class", "legend-item")
-            .attr("transform", (d, i) => `translate(${this.get('chartWidth') - 100}, ${i * (legendHeight + 5)})`)
-;
+      .attr(
+        "transform",
+        (d, i) =>
+          `translate(${this.get("chartWidth") - 100}, ${i *
+            (legendHeight + 5)})`
+      );
 
-      newGroups.merge(legendItems)
+    newGroups
+      .merge(legendItems)
       .transition()
-      .attr("transform", (d, i) => `translate(${this.get('chartWidth') - 100}, ${i * (legendHeight + 5)})`)
-      
-      newGroups
+      .attr(
+        "transform",
+        (d, i) =>
+          `translate(${this.get("chartWidth") - 100}, ${i *
+            (legendHeight + 5)})`
+      );
+
+    newGroups
       .append("rect")
       .attr("height", legendHeight)
       .attr("width", 25)
       .style("fill", d => color(d));
-      newGroups.append("text")
-      .text(d => d)
-      .attr("x", 30)
-      .attr("y", 15);
-      legendItems.select("rect").transition().style("fill", d => color(d));
-      legendItems.exit().remove();
+    newGroups.append("text").text(d => d).attr("x", 30).attr("y", 15);
+    legendItems.select("rect").transition().style("fill", d => color(d));
+    legendItems.exit().remove();
   },
   drawFrame() {
     let margin = { top: 20, right: 20, bottom: 60, left: 60 };
@@ -112,8 +119,8 @@ export default Ember.Component.extend({
     g.select(".x-axis").transition(t).call(xAxis);
     g.select(".y-axis").transition(t).call(yAxis);
 
-    let areas = g.selectAll("circle.shape").data(data, d => d.moduleName);
-    areas
+    let circles = g.selectAll("circle.shape").data(data, d => d.moduleName);
+    circles
       .enter()
       .append("circle")
       .attr("class", "shape")
@@ -122,7 +129,7 @@ export default Ember.Component.extend({
       .style("fill", d => color(d.moduleType))
       .style("fill-opacity", .5)
       .style("stroke", "black")
-      .merge(areas)
+      .merge(circles)
       .transition(t)
       .style("fill", d => color(d.moduleType))
       .style("fill-opacity", .5)
@@ -130,6 +137,6 @@ export default Ember.Component.extend({
       .attr("cx", d => x(d.inputs))
       .attr("cy", d => y(d.outputs))
       .attr("r", d => radii(d.lineCount));
-    areas.exit().transition(t).attr("r", 0).remove();
+    circles.exit().transition(t).attr("r", 0).remove();
   }
 });

@@ -1658,7 +1658,7 @@ d3-zoom@~0.2.2:
     d3-selection "~0.7.2"
     d3-transition "~0.2.8"
 
-d3@^4.0.0:
+d3@^4.0.0, d3@^4.2.0:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/d3/-/d3-4.4.2.tgz#7173647bd46c7f9b9dc6b41c1b999de0fc206a26"
   dependencies:
@@ -2213,6 +2213,13 @@ ember-composability-tools@^0.0.7:
     ember-getowner-polyfill "1.1.1"
     ember-wormhole "0.5.1"
 
+ember-composable-helpers@^1.1.2:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/ember-composable-helpers/-/ember-composable-helpers-1.2.0.tgz#9826bfca0039629a4a78ff392531213d365cca65"
+  dependencies:
+    broccoli-funnel "^1.0.1"
+    ember-cli-babel "^5.1.7"
+
 ember-composable-helpers@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ember-composable-helpers/-/ember-composable-helpers-2.0.0.tgz#8ca13c36c33b15f7d2ded05e9e1c9587814cee5a"
@@ -2220,7 +2227,19 @@ ember-composable-helpers@^2.0.0:
     broccoli-funnel "^1.0.1"
     ember-cli-babel "^5.1.7"
 
-ember-d3@^0.3.1:
+ember-d3-helpers@^0.5.14:
+  version "0.5.14"
+  resolved "https://registry.yarnpkg.com/ember-d3-helpers/-/ember-d3-helpers-0.5.14.tgz#c5bb2291e01a7e638fa9a0ad744c5205147cebd8"
+  dependencies:
+    d3 "^4.2.0"
+    ember-cli-babel "^5.1.7"
+    ember-cli-htmlbars "^1.0.10"
+    ember-composable-helpers "^1.1.2"
+    ember-d3 "^0.3.0"
+    ember-reactive-helpers "0.4.0"
+    ember-truth-helpers "1.2.0"
+
+ember-d3@^0.3.0, ember-d3@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/ember-d3/-/ember-d3-0.3.1.tgz#c90c1d42483c1dcf2b7c33c8e65e772666e189ae"
   dependencies:
@@ -2289,6 +2308,12 @@ ember-qunit@^2.0.0-beta.1:
   dependencies:
     ember-test-helpers "^0.6.0-beta.1"
 
+ember-reactive-helpers@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/ember-reactive-helpers/-/ember-reactive-helpers-0.4.0.tgz#bd6b48f556414e313c16ad26e99d5eaeefd15959"
+  dependencies:
+    ember-cli-babel "^5.1.6"
+
 ember-resolver@^2.0.3:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ember-resolver/-/ember-resolver-2.1.1.tgz#5e4c1fffe9f5f48fc2194ad7592274ed0cd74f72"
@@ -2312,6 +2337,12 @@ ember-runtime-enumerable-includes-polyfill@^1.0.0:
 ember-test-helpers@^0.6.0-beta.1:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/ember-test-helpers/-/ember-test-helpers-0.6.0.tgz#1f644fd303437ef4d19430a3e18447d57a97cf36"
+
+ember-truth-helpers@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/ember-truth-helpers/-/ember-truth-helpers-1.2.0.tgz#e63cffeaa8211882ae61a958816fded3790d065b"
+  dependencies:
+    ember-cli-babel "^5.1.5"
 
 ember-truth-helpers@^1.3.0:
   version "1.3.0"

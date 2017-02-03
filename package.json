@@ -45,6 +45,7 @@
   "dependencies": {
     "ember-composable-helpers": "^2.0.0",
     "ember-d3": "^0.3.1",
+    "ember-d3-helpers": "^0.5.14",
     "ember-truth-helpers": "^1.3.0",
     "maximum-plaid": "^0.1.3"
   }
