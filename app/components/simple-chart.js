@@ -38,49 +38,39 @@ export default Ember.Component.extend({
   },
   drawGraph() {
     let data = this.get("data");
-    let keys = [ "apples", "bananas", "cherries", "dates" ];
-    var stack = shape
-      .stack()
-      .keys(keys)
-      .order(shape.stackOrderNone)
-      .offset(shape.stackOffsetNone);
-
-    var series = stack(data);
-
+    
     var g = selection.select("g.chart");
 
-    let x = scale.scaleTime().range([ 0, this.get("chartWidth") ]);
-    let y = scale.scaleLinear().range([ this.get("chartHeight"), 0 ]);
-    let z = scale.scaleOrdinal(scale.schemeCategory10);
+    let x = scale.scaleLog().range([ 0, this.get("chartWidth") ]);
+    let y = scale.scaleLog().range([ this.get("chartHeight"), 0 ]);
+    let radii = scale.scaleLinear().range([10, 50])
+    let color = scale.scaleOrdinal(scale.schemeCategory20);
 
-    x.domain(extent(data, d => d.month));
-    let maxY = max(series[3].map(s => s[1]));
-    y.domain([ 0, maxY ]);
-    z.domain(keys);
+    x.domain(extent(data, d => d.inputs));
+    y.domain(extent(data, d => d.outputs));
+    radii.domain(extent(data, d => d.lineCount));
+    color.domain(data.mapBy('moduleType').uniq());
 
-    let xAxis = axis.axisBottom(x);
-    let yAxis = axis.axisLeft(y);
+    let xAxis = axis.axisBottom(x).ticks(5, ".2");
+    let yAxis = axis.axisLeft(y).ticks(5, ".2");
     let t = transition.transition().duration(500);
 
     g.select(".x-axis").transition(t).call(xAxis);
     g.select(".y-axis").transition(t).call(yAxis);
 
-    let area = shape
-      .area()
-      .curve(shape.curveCardinal)
-      .x(d => x(d.data.month))
-      .y0(d => y(d[0]))
-      .y1(d => y(d[1]));
-
-    let areas = g.selectAll("path.shape").data(series);
+    let areas = g.selectAll("circle.shape").data(data, d => d.moduleName);
     areas
       .enter()
-      .append("path")
+      .append("circle")
       .attr("class", "shape")
-      .style("fill", d => z(d.key))
+      .style("fill", d => color(d.moduleType))
+      .style("fill-opacity", .5)
+      .style("stroke", "black")
       .merge(areas)
       .transition(t)
-      .attr("d", area);
+      .attr("cx", d => x(d.inputs))
+      .attr("cy", d => y(d.outputs))
+      .attr("r", d => radii(d.lineCount));
     areas.exit().remove();
   }
 });

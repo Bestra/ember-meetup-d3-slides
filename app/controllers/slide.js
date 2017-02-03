@@ -1,46 +1,55 @@
 import Ember from "ember";
-import random from "d3-random";
+import dsv from "d3-dsv";
+import csvData from "d3-slides/data/template-stats";
 export default Ember.Controller.extend({
+  init() {
+    this._super(...arguments);
+    this.set('selectedModuleTypes', this.get('moduleTypes').slice())
+  },
   data: Ember.computed(function() {
     return this.createData();
   }),
+  filteredData: Ember.computed('data', 'selectedModuleTypes.[]', function() {
+    let selected = this.get('selectedModuleTypes');
+    return this.get('data').filter((d) => {
+      return selected.includes(d.moduleType);
+    });
+  }),
   createData() {
-    let appleNums = random.randomUniform(320, 3840);
-    let bananaNums = random.randomUniform(480, 1920);
-    return [
+    return dsv.csvParse(csvData, (
+      { moduleName, moduleType, inputs, outputs, lineCount }
+    ) =>
       {
-        month: new Date(2015, 0, 1),
-        apples: appleNums(),
-        bananas: bananaNums(),
-        cherries: 960,
-        dates: 400
-      },
-      {
-        month: new Date(2015, 1, 1),
-        apples: appleNums(),
-        bananas: bananaNums(),
-        cherries: 960,
-        dates: 400
-      },
-      {
-        month: new Date(2015, 2, 1),
-        apples: appleNums(),
-        bananas: bananaNums(),
-        cherries: 640,
-        dates: 400
-      },
-      {
-        month: new Date(2015, 3, 1),
-        apples: appleNums(),
-        bananas: bananaNums(),
-        cherries: 640,
-        dates: 400
-      }
-    ];
+        return {
+          moduleName,
+          moduleType,
+          inputs: 0.1 + +inputs,
+          outputs: 0.1 + +outputs,
+          lineCount: +lineCount
+        };
+      });
   },
+  moduleTypes: Ember.computed('data', function() {
+    return this.get('data').mapBy('moduleType').uniq();
+  }),
+  selectedModuleTypes: null,
+  moduleCheckboxes: Ember.computed('moduleTypes', 'selectedModuleTypes.[]', function() {
+    let s = this.get('selectedModuleTypes');
+    return this.get("moduleTypes").map((m) => {
+      return {type: m, selected: s.includes(m)}
+    })
+  }),
   actions: {
     refreshData() {
       this.set("data", this.createData());
+    },
+    toggleSelection(type) {
+      let selected = this.get('selectedModuleTypes');
+      if (selected.includes(type)) {
+        selected.removeObject(type);
+      } else {
+        selected.addObject(type);
+      }
     }
   }
 });

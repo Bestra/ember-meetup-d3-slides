@@ -1,7 +1,14 @@
-it's a slide
-
+Pick the types of things to see
 <div>
-    {{simple-chart width=500 height=500 data=data}}
+{{#each moduleCheckboxes as |m|}}
+  {{m.type}} <input type="checkbox"
+                    checked={{m.selected}}
+                    {{action "toggleSelection" m.type on="change"}} />
+{{/each}}
+
+</div>
+<div>
+    {{simple-chart width=500 height=500 data=filteredData}}
 
     <button {{action "refreshData"}}>Refresh</button>
 </div>
