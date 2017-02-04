@@ -13,11 +13,11 @@ export default Ember.Component.extend({
   didInsertElement() {
     this.drawFrame();
     this.drawGraph();
-    this.drawLegend();
+    // this.drawLegend();
   },
   didUpdateAttrs() {
     this.drawGraph();
-    this.drawLegend();
+    // this.drawLegend();
   },
   chartHeight: 0,
   chartWidth: 0,
@@ -77,30 +77,30 @@ export default Ember.Component.extend({
     g.append("g").attr("class", "y-axis");
   },
   legendItems: Ember.computed("data.[]", function() {
-    return this.get("data").mapBy("moduleType").uniq();
+    return this.get("data").mapBy("type").uniq();
   }),
   xScale: Ember.computed("data.[]", function() {
     return scale
-      .scaleLog()
-      .range([ 0, this.get("chartWidth") ])
-      .domain(extent(this.get("data"), d => d.inputs));
+      .scalePoint()
+      .range([ 100, this.get("chartWidth") ])
+      .domain(this.get('data').mapBy('name'));
   }),
   yScale: Ember.computed("data.[]", function() {
     return scale
-      .scaleLog()
+      .scaleLinear()
       .range([ this.get("chartHeight"), 0 ])
-      .domain(extent(this.get("data"), d => d.outputs));
+      .domain([0, max(this.get("data"), d => d.abv)]);
   }),
   colorScale: Ember.computed("data.[]", function() {
     return scale
       .scaleOrdinal(scale.schemeCategory10)
-      .domain(this.get("data").mapBy("moduleType").uniq());
+      .domain(this.get("data").mapBy("type").uniq());
   }),
   radiusScale: Ember.computed("data.[]", function() {
     return scale
       .scaleLinear()
-      .range([ 5, 50 ])
-      .domain(extent(this.get("data"), d => d.lineCount));
+      .range([ 5, 25 ])
+      .domain(extent(this.get("data"), d => d.sugar));
   }),
   drawGraph() {
     let data = this.get("data");
@@ -112,31 +112,37 @@ export default Ember.Component.extend({
     let radii = this.get("radiusScale");
     let color = this.get("colorScale");
 
-    let xAxis = axis.axisBottom(x).ticks(5, ".2");
-    let yAxis = axis.axisLeft(y).ticks(5, ".2");
+    let xAxis = axis.axisBottom(x);
+    let yAxis = axis.axisLeft(y);
     let t = transition.transition().duration(500);
 
     g.select(".x-axis").transition(t).call(xAxis);
     g.select(".y-axis").transition(t).call(yAxis);
 
-    let circles = g.selectAll("circle.shape").data(data, d => d.moduleName);
+    let circles = g.selectAll("circle.shape").data(data, d => d.name);
     circles
       .enter()
       .append("circle")
       .attr("class", "shape")
-      .attr("cx", d => x(d.inputs))
-      .attr("cy", d => y(d.outputs))
-      .style("fill", d => color(d.moduleType))
-      .style("fill-opacity", .5)
-      .style("stroke", "black")
+      .attr("cx", (d) => x(d.name))
+      .attr("cy", d => y(d.abv))
       .merge(circles)
       .transition(t)
-      .style("fill", d => color(d.moduleType))
+      .style("fill", d => color(d.type))
       .style("fill-opacity", .5)
       .style("stroke", "black")
-      .attr("cx", d => x(d.inputs))
-      .attr("cy", d => y(d.outputs))
-      .attr("r", d => radii(d.lineCount));
+      .attr("cx", (d) => x(d.name))
+      .attr("cy", d => y(d.abv))
+      .attr("r", d => radii(d.sugar));
     circles.exit().transition(t).attr("r", 0).remove();
+
+    let labels = g.selectAll("text.label").data(data, d => d.name);
+    labels.exit().remove();
+    labels.enter()
+    .append("text")
+    .attr("class", "label")
+    .text(d => d.name)
+    .merge(labels)
+    .attr("transform", d => `translate(${x(d.name) + 5}, ${y(d.abv) - radii(d.sugar) - 5 })rotate(-90)`)
   }
 });

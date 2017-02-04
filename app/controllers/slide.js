@@ -1,50 +1,51 @@
 import Ember from "ember";
 import dsv from "d3-dsv";
-import csvData from "d3-slides/data/template-stats";
+import csvData from "d3-slides/data/liquid-recipes";
 export default Ember.Controller.extend({
   init() {
     this._super(...arguments);
-    this.set('selectedModuleTypes', this.get('moduleTypes').slice())
+    this.set("selectedTypes", this.get("types").slice());
   },
   data: Ember.computed(function() {
     return this.createData();
   }),
-  filteredData: Ember.computed('data', 'selectedModuleTypes.[]', function() {
-    let selected = this.get('selectedModuleTypes');
-    return this.get('data').filter((d) => {
-      return selected.includes(d.moduleType);
+  filteredData: Ember.computed("data", "selectedTypes.[]", function() {
+    let selected = this.get("selectedTypes");
+    return this.get("data").filter(d => {
+      return selected.includes(d.type);
     });
   }),
   createData() {
     return dsv.csvParse(csvData, (
-      { moduleName, moduleType, inputs, outputs, lineCount }
+      { type, name, finishedVol, abv, sugar, acid }
     ) =>
       {
         return {
-          moduleName,
-          moduleType,
-          inputs: 0.1 + +inputs,
-          outputs: 0.1 + +outputs,
-          lineCount: +lineCount
+          type,
+          name,
+          vol: +finishedVol,
+          abv: +abv,
+          sugar: +sugar,
+          acid: +acid
         };
-      });
+      }).sortBy('abv');
   },
-  moduleTypes: Ember.computed('data', function() {
-    return this.get('data').mapBy('moduleType').uniq();
+  types: Ember.computed("data", function() {
+    return this.get("data").mapBy("type").uniq();
   }),
-  selectedModuleTypes: null,
-  moduleCheckboxes: Ember.computed('moduleTypes', 'selectedModuleTypes.[]', function() {
-    let s = this.get('selectedModuleTypes');
-    return this.get("moduleTypes").map((m) => {
-      return {type: m, selected: s.includes(m)}
-    })
+  selectedTypes: null,
+  moduleCheckboxes: Ember.computed("types", "selectedTypes.[]", function() {
+    let s = this.get("selectedTypes");
+    return this.get("types").map(m => {
+      return { type: m, selected: s.includes(m) };
+    });
   }),
   actions: {
     refreshData() {
       this.set("data", this.createData());
     },
     toggleSelection(type) {
-      let selected = this.get('selectedModuleTypes');
+      let selected = this.get("selectedTypes");
       if (selected.includes(type)) {
         selected.removeObject(type);
       } else {

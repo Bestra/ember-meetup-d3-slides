@@ -8,14 +8,14 @@ Pick the types of things to see
 
 </div>
 <div>
-    {{!--{{simple-chart width=800 height=800 data=filteredData}}--}}
+    {{simple-chart width=2400 height=800 data=filteredData}}
         {{!--{{helper-chart width=800 height=800 data=filteredData}}--}}
-    {{#my-chart data=filteredData as |scales|}}
+    {{!--{{#my-chart data=filteredData as |scales|}}
         {{#d3-chart width=800 height=800 scales=scales as |c|}}
             {{#c.selectAll data=filteredData}}
                 {{c.circle className="shape" cx="inputs" cy="outputs" fill="moduleType" r="lineCount"}}
             {{/c.selectAll}}
         {{/d3-chart}}
-    {{/my-chart}}
-    <button {{action "refreshData"}}>Refresh</button>
+    {{/my-chart}}--}}
+    
 </div>
