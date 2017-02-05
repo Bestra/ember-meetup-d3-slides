@@ -1,12 +1,14 @@
 Pick the types of things to see
-<div>
 {{#each moduleCheckboxes as |m|}}
-  {{m.type}} <input type="checkbox"
-                    checked={{m.selected}}
-                    {{action "toggleSelection" m.type on="change"}} />
-{{/each}}
+<div>
 
+    {{m.type}} <input type="checkbox"
+                        checked={{m.selected}}
+                        {{action "toggleSelection" m.type on="change"}} />
 </div>
+    {{/each}}
+
+
 <div>
     {{simple-chart width=2400 height=800 data=filteredData}}
         {{!--{{helper-chart width=800 height=800 data=filteredData}}--}}
@@ -17,5 +19,38 @@ Pick the types of things to see
             {{/c.selectAll}}
         {{/d3-chart}}
     {{/my-chart}}--}}
+    <svg width={{svgWidth}} height={{svgHeight}}>
+        <g class="chart" transform="translate(60,10)">
+            {{#each filteredData as |d|}}
+                <circle 
+                    class="sugar"
+                    cx={{apply-d3-scale xScale d.name}}
+                    cy={{apply-d3-scale yScale d.abv}}
+                    r={{apply-d3-scale sugarScale d.sugar}}
+                    fill={{apply-d3-scale colorScale d.type}}
+                    fill-opacity=0.5
+                    />
+                <circle 
+                    class="acid"
+                    cx={{apply-d3-scale xScale d.name}}
+                    cy={{apply-d3-scale yScale d.abv}}
+                    r={{apply-d3-scale acidScale d.acid}}
+                    fill="white"
+                    fill-opacity=0
+                    stroke="black"
+                    />
+                <text 
+                    class="label"
+                    transform="translate(
+                        {{apply-d3-scale xScale d.name}},
+                        {{apply-d3-scale yScale d.abv}})
+                        rotate(-90)">
+                    {{d.name}}
+                </text>
+            {{/each}}
+            {{d3-axis class="unique-y-axis" axis=yAxis}}
+        </g>
+
+    </svg>
     
 </div>

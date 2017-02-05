@@ -89,7 +89,7 @@ export default Ember.Component.extend({
     return scale
       .scaleLinear()
       .range([ this.get("chartHeight"), 0 ])
-      .domain([0, max(this.get("data"), d => d.abv)]);
+      .domain([10, max(this.get("data"), d => d.abv)]);
   }),
   colorScale: Ember.computed("data.[]", function() {
     return scale
@@ -99,8 +99,15 @@ export default Ember.Component.extend({
   radiusScale: Ember.computed("data.[]", function() {
     return scale
       .scaleLinear()
-      .range([ 5, 25 ])
-      .domain(extent(this.get("data"), d => d.sugar));
+      .range([ 1, 25 ])
+      .domain([0, 10]);
+  }),
+
+  acidScale: Ember.computed("data.[]", function() {
+    return scale
+      .scaleLinear()
+      .range([ 1, 25 ])
+      .domain([0, 1 ]);
   }),
   drawGraph() {
     let data = this.get("data");
@@ -111,6 +118,7 @@ export default Ember.Component.extend({
     let y = this.get("yScale");
     let radii = this.get("radiusScale");
     let color = this.get("colorScale");
+    let acid = this.get("acidScale");
 
     let xAxis = axis.axisBottom(x);
     let yAxis = axis.axisLeft(y);
@@ -119,22 +127,39 @@ export default Ember.Component.extend({
     g.select(".x-axis").transition(t).call(xAxis);
     g.select(".y-axis").transition(t).call(yAxis);
 
-    let circles = g.selectAll("circle.shape").data(data, d => d.name);
-    circles
+    let sugarCircles = g.selectAll("circle.sugar").data(data, d => d.name);
+    sugarCircles
       .enter()
       .append("circle")
-      .attr("class", "shape")
+      .attr("class", "sugar")
       .attr("cx", (d) => x(d.name))
       .attr("cy", d => y(d.abv))
-      .merge(circles)
+      .merge(sugarCircles)
       .transition(t)
       .style("fill", d => color(d.type))
       .style("fill-opacity", .5)
-      .style("stroke", "black")
       .attr("cx", (d) => x(d.name))
       .attr("cy", d => y(d.abv))
       .attr("r", d => radii(d.sugar));
-    circles.exit().transition(t).attr("r", 0).remove();
+    sugarCircles.exit().transition(t).attr("r", 0).remove();
+
+    let acidCircles = g.selectAll("circle.acid").data(data, d => d.name);
+    acidCircles
+      .enter()
+      .append("circle")
+      .attr("class", "acid")
+      .attr("cx", (d) => x(d.name))
+      .attr("cy", d => y(d.abv))
+      .merge(acidCircles)
+      .transition(t)
+      .style("stroke", "black")
+      .style("fill", "white")
+      .style("fill-opacity", 0)
+      .style("stroke-width", "1")
+      .attr("cx", (d) => x(d.name))
+      .attr("cy", d => y(d.abv))
+      .attr("r", d => acid(d.acid));
+    acidCircles.exit().transition(t).attr("r", 0).remove();
 
     let labels = g.selectAll("text.label").data(data, d => d.name);
     labels.exit().remove();
