@@ -28,6 +28,12 @@ export default Ember.Controller.extend({
       return selected.includes(d.type);
     });
   }),
+
+  filteredValues: Ember.computed("filteredData.[]", function() {
+    return this.get('filteredData').map((r) => {
+      return [r.name, r.abv];
+    })
+  }),
   
   
   createData() {

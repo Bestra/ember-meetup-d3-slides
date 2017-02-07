@@ -1,0 +1,6 @@
+.tooltip {
+    display: none;
+    &:hover {
+        display: inherit;
+    }
+}

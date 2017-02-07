@@ -4,10 +4,10 @@
 (d3-join
   enter=(pipe
     (d3-append "circle")
-    (d3-attr "cx" (pipe (d3-get "inputs") xScale))
-    (d3-attr "cy" (pipe (d3-get "outputs") yScale))
-    (d3-attr "r" (pipe (d3-get "lineCount") radiusScale))
+    (d3-attr "cx" (pipe (d3-get "name") xScale))
+    (d3-attr "cy" (pipe (d3-get "abv") yScale))
+    (d3-attr "r" (pipe (d3-get "sugar") sugarScale))
     (d3-attr "stroke" "black")
-    (d3-style "fill" (pipe (d3-get "moduleType") colorScale))
+    (d3-style "fill" (pipe (d3-get "type") colorScale))
     (d3-style "fill-opacity" 0.5))
     ))}}

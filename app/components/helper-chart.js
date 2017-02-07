@@ -12,29 +12,7 @@ export default Ember.Component.extend({
   data: null,
    chartHeight: 0,
   chartWidth: 0,
-  xScale: Ember.computed("data.[]", "chartWidth", function() {
-    return scale
-      .scaleLog()
-      .range([ 0, this.get("chartWidth") ])
-      .domain(extent(this.get("data"), d => d.inputs));
-  }),
-  yScale: Ember.computed("data.[]", "chartHeight", function() {
-    return scale
-      .scaleLog()
-      .range([ this.get("chartHeight"), 0 ])
-      .domain(extent(this.get("data"), d => d.outputs));
-  }),
-  colorScale: Ember.computed("data.[]", function() {
-    return scale
-      .scaleOrdinal(scale.schemeCategory10)
-      .domain(this.get("data").mapBy("moduleType").uniq());
-  }),
-  radiusScale: Ember.computed("data.[]", function() {
-    return scale
-      .scaleLinear()
-      .range([ 5, 50 ])
-      .domain(extent(this.get("data"), d => d.lineCount));
-  }),
+
 
   didInsertElement() {
       this._super(...arguments);

@@ -10,8 +10,9 @@ Pick the types of things to see
 
 
 <div>
-    {{simple-chart width=2400 height=800 data=filteredData}}
-        {{!--{{helper-chart width=800 height=800 data=filteredData}}--}}
+    {{simple-chart width=svgWidth height=svgHeight data=filteredData}}
+        {{!--{{helper-chart width=svgWidth height=svgHeight data=filteredData
+        xScale=xScale yScale=yScale sugarScale=sugarScale colorScale=colorScale}}--}}
     {{!--{{#my-chart data=filteredData as |scales|}}
         {{#d3-chart width=800 height=800 scales=scales as |c|}}
             {{#c.selectAll data=filteredData}}
@@ -22,35 +23,58 @@ Pick the types of things to see
     <svg width={{svgWidth}} height={{svgHeight}}>
         <g class="chart" transform="translate(60,10)">
             {{#each filteredData as |d|}}
-                <circle 
-                    class="sugar"
-                    cx={{apply-d3-scale xScale d.name}}
-                    cy={{apply-d3-scale yScale d.abv}}
-                    r={{apply-d3-scale sugarScale d.sugar}}
-                    fill={{apply-d3-scale colorScale d.type}}
-                    fill-opacity=0.5
-                    />
-                <circle 
-                    class="acid"
-                    cx={{apply-d3-scale xScale d.name}}
-                    cy={{apply-d3-scale yScale d.abv}}
-                    r={{apply-d3-scale acidScale d.acid}}
-                    fill="white"
-                    fill-opacity=0
-                    stroke="black"
-                    />
-                <text 
-                    class="label"
-                    transform="translate(
-                        {{apply-d3-scale xScale d.name}},
-                        {{apply-d3-scale yScale d.abv}})
-                        rotate(-90)">
-                    {{d.name}}
-                </text>
+                {{#with (hash 
+                    x=(apply-d3-scale xScale d.name)
+                    y=(apply-d3-scale yScale d.abv)) as |c|}}
+                    <circle 
+                        class="sugar"
+                        cx={{c.x}}
+                        cy={{c.y}}
+                        r={{apply-d3-scale sugarScale d.sugar}}
+                        fill={{apply-d3-scale colorScale d.type}}
+                        fill-opacity=0.5
+                        />
+                    <circle 
+                        class="acid"
+                        cx={{c.x}}
+                        cy={{c.y}}
+                        r={{apply-d3-scale acidScale d.acid}}
+                        fill="white"
+                        fill-opacity=0
+                        stroke="black"
+                        />
+                    <text 
+                        class="label"
+                        transform="translate(
+                            {{c.x}},
+                            {{c.y}})
+                            rotate(-90)">
+                        {{d.name}}
+                    </text>
+                {{/with}}
             {{/each}}
             {{d3-axis class="unique-y-axis" axis=yAxis}}
         </g>
 
     </svg>
+
+    
+    {{#with (area 2400 800 margin="20 20 60 60") as |p|}}
+      {{#plaid-plot
+        xScale=(point-scale (map-by "name" filteredData) (array 100 chartWidth))
+        yScale=(linear-scale (array 10 40) (array chartHeight 0))
+        plotArea=p as |plot|}}
+      {{#plot.scatter filteredValues as |x y|}}
+      <circle 
+                        class="sugar"
+                        cx={{x}}
+                        cy={{y}}
+                        r=10
+                        fill="blue"
+                        fill-opacity=0.5
+                        />
+      {{/plot.scatter}}
+      {{/plaid-plot}}
+    {{/with}}
     
 </div>
