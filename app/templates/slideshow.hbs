@@ -1,0 +1,14 @@
+<svg width=500 height=500 {{action 'clearSelection'}}>
+  {{#d3/bind-selection
+    selector="rect"
+    data=textBoxes as |sel|}}
+    {{d3/text-box selection=sel
+                  selectedItem=selectedItem
+                  animate=shouldAnimate
+                  d3Click=(action 'textBoxSelected')
+                  d3Drag=(action 'textBoxDragged')}}
+  {{/d3/bind-selection}}
+</svg>
+
+<button {{action 'randomize'}}>Rando</button>
+<button {{action 'add'}}>Add</button>
